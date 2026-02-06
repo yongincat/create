@@ -4,10 +4,10 @@ import { getConfig } from "./lib/config";
 import { TagInput } from "./components/TagInput";
 
 const STYLE_PRESETS = [
-  "Warm & Friendly",
-  "Professional",
-  "Cute & Playful",
-  "Short & Punchy"
+  "따뜻하고 친근하게",
+  "전문적이고 신뢰감 있게",
+  "귀엽고 발랄하게",
+  "짧고 강렬하게"
 ];
 
 function getTokenFromUrl(): string | null {
@@ -62,7 +62,7 @@ export function App() {
       setOutput(response.text);
       setTitle(response.title || "");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Unexpected error";
+      const message = err instanceof Error ? err.message : "알 수 없는 오류";
       setError(message);
     } finally {
       setLoading(false);
@@ -93,18 +93,16 @@ export function App() {
     return (
       <div className="page">
         <header className="hero">
-          <p className="eyebrow">Access Required</p>
+          <p className="eyebrow">접근 권한 필요</p>
           <h1>{config.appTitle}</h1>
           <p className="subtitle">
-            This generator is available by invitation only. Please use the
-            private link provided by the rescue team.
+            이 생성기는 초대받은 사람만 사용할 수 있어요. 구조팀에서 전달한
+            전용 링크로 접속해 주세요.
           </p>
           <div className="card info">
-            <p>
-              Add your access token as a query parameter, for example:
-            </p>
+            <p>아래처럼 토큰을 주소 끝에 붙여 접속합니다.</p>
             <code className="token-link">
-              https://your-pages-site/?token=YOURTOKEN
+              https://your-site/?token=YOURTOKEN
             </code>
           </div>
         </header>
@@ -115,28 +113,28 @@ export function App() {
   return (
     <div className="page">
       <header className="hero">
-        <p className="eyebrow">Adoption Story Builder</p>
+        <p className="eyebrow">입양 홍보문 생성기</p>
         <h1>{config.appTitle}</h1>
         <p className="subtitle">
-          Generate polished, ready-to-post adoption promos that keep facts
-          consistent and highlight each cat's unique charm.
+          핵심 정보를 정리해 바로 게시 가능한 홍보문을 만들어 드립니다.
+          고양이의 매력을 살리고 사실 기반으로 정리해요.
         </p>
       </header>
 
       <main className="grid">
         <section className="card form-card">
-          <h2>Cat Details</h2>
+          <h2>고양이 정보</h2>
           <div className="field-grid">
             <div className="field">
-              <label className="label">Cat name</label>
+              <label className="label">이름</label>
               <input
                 value={inputs.catName}
                 onChange={(e) => update("catName", e.target.value)}
-                placeholder="Mochi"
+                placeholder="모찌"
               />
             </div>
             <div className="field">
-              <label className="label">Age</label>
+              <label className="label">나이</label>
               <div className="row">
                 <input
                   value={inputs.ageValue}
@@ -149,97 +147,97 @@ export function App() {
                     update("ageUnit", e.target.value as GenerateInputs["ageUnit"])
                   }
                 >
-                  <option value="months">months</option>
-                  <option value="years">years</option>
+                  <option value="months">개월</option>
+                  <option value="years">년</option>
                 </select>
               </div>
             </div>
             <div className="field">
-              <label className="label">Sex</label>
+              <label className="label">성별</label>
               <select
                 value={inputs.sex}
                 onChange={(e) =>
                   update("sex", e.target.value as GenerateInputs["sex"])
                 }
               >
-                <option value="female">female</option>
-                <option value="male">male</option>
-                <option value="unknown">unknown</option>
+                <option value="female">암컷</option>
+                <option value="male">수컷</option>
+                <option value="unknown">미상</option>
               </select>
             </div>
             <div className="field">
-              <label className="label">Neutered/Spayed</label>
+              <label className="label">중성화 여부</label>
               <select
                 value={inputs.neutered}
                 onChange={(e) =>
                   update("neutered", e.target.value as GenerateInputs["neutered"])
                 }
               >
-                <option value="yes">yes</option>
-                <option value="no">no</option>
-                <option value="unknown">unknown</option>
+                <option value="yes">완료</option>
+                <option value="no">미완료</option>
+                <option value="unknown">미상</option>
               </select>
             </div>
           </div>
 
           <TagInput
-            label="Temperament tags"
-            placeholder="gentle, curious, lap cat"
+            label="성격 태그"
+            placeholder="온순함, 호기심, 무릎냥이"
             value={inputs.temperament}
             onChange={(next) => update("temperament", next)}
           />
 
           <div className="field">
-            <label className="label">Rescue story</label>
+            <label className="label">구조 이야기</label>
             <textarea
               rows={4}
               value={inputs.rescueStory}
               onChange={(e) => update("rescueStory", e.target.value)}
-              placeholder="Found wandering near a neighborhood park..."
+              placeholder="동네 공원 근처에서 발견됐어요..."
             />
           </div>
 
           <div className="field">
-            <label className="label">Health notes</label>
+            <label className="label">건강 정보</label>
             <textarea
               rows={3}
               value={inputs.healthNotes}
               onChange={(e) => update("healthNotes", e.target.value)}
-              placeholder="Vaccinated, microchipped, treated for fleas."
+              placeholder="접종 완료, 마이크로칩 등록, 구충 완료"
             />
           </div>
 
           <div className="field">
-            <label className="label">Special needs (optional)</label>
+            <label className="label">특이사항 (선택)</label>
             <textarea
               rows={2}
               value={inputs.specialNeeds}
               onChange={(e) => update("specialNeeds", e.target.value)}
-              placeholder="Requires a quiet home, daily eye drops, etc."
+              placeholder="조용한 환경 필요, 안약 매일 사용 등"
             />
           </div>
 
           <div className="field">
-            <label className="label">Adoption requirements</label>
+            <label className="label">입양 조건</label>
             <textarea
               rows={3}
               value={inputs.adoptionRequirements}
               onChange={(e) => update("adoptionRequirements", e.target.value)}
-              placeholder="Indoor-only home, patient introductions to other pets..."
+              placeholder="실내 생활, 다른 반려동물과 천천히 합사"
             />
           </div>
 
           <div className="field">
-            <label className="label">Contact (optional)</label>
+            <label className="label">연락처 (선택)</label>
             <input
               value={inputs.contact}
               onChange={(e) => update("contact", e.target.value)}
-              placeholder="Email or form link"
+              placeholder="이메일 또는 신청 폼 링크"
             />
           </div>
 
           <div className="field">
-            <label className="label">Style preset</label>
+            <label className="label">문체</label>
             <select
               value={stylePreset}
               onChange={(e) => setStylePreset(e.target.value)}
@@ -253,7 +251,7 @@ export function App() {
           </div>
 
           <div className="field">
-            <label className="label">Creativity: {creativity}</label>
+            <label className="label">창의성: {creativity}</label>
             <input
               type="range"
               min={0}
@@ -268,7 +266,7 @@ export function App() {
             onClick={handleGenerate}
             disabled={loading}
           >
-            {loading ? "Generating..." : "Generate"}
+            {loading ? "생성 중..." : "홍보문 생성"}
           </button>
 
           {error && <div className="error">{error}</div>}
@@ -276,7 +274,7 @@ export function App() {
 
         <section className="card output-card">
           <div className="output-header">
-            <h2>Generated Post</h2>
+            <h2>생성 결과</h2>
             <span className="char-count">
               {output.length}/{config.maxOutputChars}
             </span>
@@ -290,20 +288,20 @@ export function App() {
               </div>
             ) : (
               <p className="placeholder">
-                Your generated adoption post will appear here.
+                생성된 홍보문이 여기에 표시됩니다.
               </p>
             )}
           </div>
 
           <div className="output-actions">
             <button onClick={handleCopy} disabled={!output}>
-              Copy
+              복사
             </button>
             <button onClick={handleGenerate} disabled={loading}>
-              Regenerate
+              다시 생성
             </button>
             <button onClick={handleDownload} disabled={!output}>
-              Download .txt
+              TXT로 저장
             </button>
           </div>
         </section>

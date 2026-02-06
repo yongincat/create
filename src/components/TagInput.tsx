@@ -50,7 +50,7 @@ export function TagInput({ label, placeholder, value, onChange }: TagInputProps)
               type="button"
               className="tag-remove"
               onClick={() => removeTag(tag)}
-              aria-label={`Remove ${tag}`}
+              aria-label={`${tag} 삭제`}
             >
               ×
             </button>
@@ -64,7 +64,7 @@ export function TagInput({ label, placeholder, value, onChange }: TagInputProps)
           onKeyDown={handleKeyDown}
         />
       </div>
-      <div className="hint">Press Enter or comma to add a tag.</div>
+      <div className="hint">엔터 또는 , 를 눌러 태그를 추가하세요.</div>
     </div>
   );
 }

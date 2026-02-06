@@ -113,22 +113,22 @@ export const handler = async (event: any) => {
   }
 
   if (!origin) {
-    return jsonResponse({ error: "Origin not allowed" }, 403);
+    return jsonResponse({ error: "허용되지 않은 출처입니다." }, 403);
   }
 
   if (event.httpMethod !== "POST") {
-    return jsonResponse({ error: "Method not allowed" }, 405, origin);
+    return jsonResponse({ error: "허용되지 않은 요청 방식입니다." }, 405, origin);
   }
 
   let payload: GenerateRequest;
   try {
     payload = JSON.parse(event.body || "{}") as GenerateRequest;
   } catch {
-    return jsonResponse({ error: "Invalid JSON" }, 400, origin);
+    return jsonResponse({ error: "요청 형식이 올바르지 않습니다." }, 400, origin);
   }
 
   if (!payload?.token || !isAllowedToken(payload.token)) {
-    return jsonResponse({ error: "Unauthorized" }, 401, origin);
+    return jsonResponse({ error: "접근 권한이 없습니다." }, 401, origin);
   }
 
   const ip =
@@ -138,7 +138,7 @@ export const handler = async (event: any) => {
   const tokenOk = withinRateLimit(tokenBuckets, payload.token);
   const ipOk = withinRateLimit(ipBuckets, ip);
   if (!tokenOk || !ipOk) {
-    return jsonResponse({ error: "Rate limit exceeded" }, 429, origin);
+    return jsonResponse({ error: "요청이 너무 많습니다. 잠시 후 다시 시도하세요." }, 429, origin);
   }
 
   const maxOutputChars = Number(process.env.MAX_OUTPUT_CHARS || 2500);
@@ -177,7 +177,7 @@ export const handler = async (event: any) => {
 
   if (!openaiRes.ok) {
     const text = await openaiRes.text();
-    return jsonResponse({ error: `OpenAI error: ${text}` }, 502, origin);
+    return jsonResponse({ error: `OpenAI 오류: ${text}` }, 502, origin);
   }
 
   const data = (await openaiRes.json()) as { output_text?: string };

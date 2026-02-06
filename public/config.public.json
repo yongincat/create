@@ -1,5 +1,5 @@
 {
   "backendBaseUrl": "/.netlify/functions",
-  "appTitle": "Cat Adoption Post Generator",
+  "appTitle": "고양이 입양 홍보문 생성기",
   "maxOutputChars": 2500
 }

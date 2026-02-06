@@ -46,7 +46,7 @@ export async function generatePost(
     } catch {
       // ignore json parse errors
     }
-    throw new Error(`${message} (status ${res.status})`);
+    throw new Error(`${message} (상태 ${res.status})`);
   }
 
   return (await res.json()) as GenerateResponse;
