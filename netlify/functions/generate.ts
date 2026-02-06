@@ -6,11 +6,10 @@ type GenerateRequest = {
     ageUnit: "months" | "years";
     sex: "male" | "female" | "unknown";
     neutered: "yes" | "no" | "unknown";
-    temperament: string[];
+    temperament: string;
     rescueStory: string;
     healthNotes: string;
     specialNeeds?: string;
-    adoptionRequirements: string;
     contact?: string;
   };
   stylePreset: string;
@@ -68,9 +67,7 @@ function mapCreativity(value: number) {
 
 function buildPrompt(payload: GenerateRequest) {
   const { inputs, stylePreset } = payload;
-  const temperament = inputs.temperament?.length
-    ? inputs.temperament.join(", ")
-    : "Not specified";
+  const temperament = inputs.temperament?.trim() || "Not specified";
 
   return (
     `Style preset: ${stylePreset}\n\n` +
@@ -82,7 +79,6 @@ function buildPrompt(payload: GenerateRequest) {
     `Rescue story: ${inputs.rescueStory || "Not specified"}\n` +
     `Health notes: ${inputs.healthNotes || "Not specified"}\n` +
     `Special needs: ${inputs.specialNeeds || "None"}\n` +
-    `Adoption requirements: ${inputs.adoptionRequirements || "Not specified"}\n` +
     `Contact: ${inputs.contact || "Not specified"}`
   );
 }

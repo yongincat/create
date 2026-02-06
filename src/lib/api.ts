@@ -6,11 +6,10 @@ export type GenerateInputs = {
   ageUnit: "months" | "years";
   sex: "male" | "female" | "unknown";
   neutered: "yes" | "no" | "unknown";
-  temperament: string[];
+  temperament: string;
   rescueStory: string;
   healthNotes: string;
   specialNeeds?: string;
-  adoptionRequirements: string;
   contact?: string;
 };
 

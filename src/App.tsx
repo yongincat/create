@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { generatePost, type GenerateInputs } from "./lib/api";
 import { getConfig } from "./lib/config";
-import { TagInput } from "./components/TagInput";
 
 const STYLE_PRESETS = [
   "따뜻하고 친근하게",
@@ -31,11 +30,10 @@ export function App() {
     ageUnit: "months",
     sex: "unknown",
     neutered: "unknown",
-    temperament: [],
+    temperament: "",
     rescueStory: "",
     healthNotes: "",
     specialNeeds: "",
-    adoptionRequirements: "",
     contact: ""
   });
 
@@ -180,12 +178,14 @@ export function App() {
             </div>
           </div>
 
-          <TagInput
-            label="성격 태그"
-            placeholder="온순함, 호기심, 무릎냥이"
-            value={inputs.temperament}
-            onChange={(next) => update("temperament", next)}
-          />
+          <div className="field">
+            <label className="label">성격 한줄 설명</label>
+            <input
+              value={inputs.temperament}
+              onChange={(e) => update("temperament", e.target.value)}
+              placeholder="예: 사람을 좋아하고 장난감을 잘 쫓아요"
+            />
+          </div>
 
           <div className="field">
             <label className="label">구조 이야기</label>
@@ -208,22 +208,12 @@ export function App() {
           </div>
 
           <div className="field">
-            <label className="label">특이사항 (선택)</label>
+            <label className="label">특이사항</label>
             <textarea
-              rows={2}
+              rows={5}
               value={inputs.specialNeeds}
               onChange={(e) => update("specialNeeds", e.target.value)}
-              placeholder="조용한 환경 필요, 안약 매일 사용 등"
-            />
-          </div>
-
-          <div className="field">
-            <label className="label">입양 조건</label>
-            <textarea
-              rows={3}
-              value={inputs.adoptionRequirements}
-              onChange={(e) => update("adoptionRequirements", e.target.value)}
-              placeholder="실내 생활, 다른 반려동물과 천천히 합사"
+              placeholder="건강, 생활 습관, 환경 요구 등 자유롭게 자세히 적어주세요."
             />
           </div>
 
