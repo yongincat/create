@@ -1,0 +1,7 @@
+name = "cat-adoption-generator"
+main = "src/index.ts"
+compatibility_date = "2026-02-01"
+
+[vars]
+# ALLOWED_ORIGIN should be set as a secret in CI for production.
+# This value can be overridden with `wrangler secret put ALLOWED_ORIGIN`.

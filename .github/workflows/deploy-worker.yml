@@ -1,0 +1,36 @@
+name: Deploy Cloudflare Worker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "worker/**"
+      - ".github/workflows/deploy-worker.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+      - run: npm ci
+        working-directory: worker
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: worker
+          command: deploy
+          secrets: |
+            OPENAI_API_KEY
+            ALLOWED_TOKENS
+            ALLOWED_ORIGIN
+            MAX_OUTPUT_CHARS
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ALLOWED_TOKENS: ${{ secrets.ALLOWED_TOKENS }}
+          ALLOWED_ORIGIN: ${{ secrets.ALLOWED_ORIGIN }}
+          MAX_OUTPUT_CHARS: ${{ secrets.MAX_OUTPUT_CHARS }}
