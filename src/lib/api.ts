@@ -22,6 +22,7 @@ export type GenerateRequest = {
 };
 
 export type GenerateResponse = {
+  title?: string;
   text: string;
 };
 

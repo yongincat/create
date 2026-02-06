@@ -1,5 +1,5 @@
 {
-  "backendBaseUrl": "https://YOUR-WORKER.your-subdomain.workers.dev",
+  "backendBaseUrl": "/.netlify/functions",
   "appTitle": "Cat Adoption Post Generator",
   "maxOutputChars": 2500
 }

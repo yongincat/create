@@ -42,6 +42,7 @@ export function App() {
   const [stylePreset, setStylePreset] = useState(STYLE_PRESETS[0]);
   const [creativity, setCreativity] = useState(50);
   const [output, setOutput] = useState("");
+  const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -59,6 +60,7 @@ export function App() {
         creativity: clampCreativity(creativity)
       });
       setOutput(response.text);
+      setTitle(response.title || "");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unexpected error";
       setError(message);
@@ -282,7 +284,10 @@ export function App() {
 
           <div className="output-body">
             {output ? (
-              <pre>{output}</pre>
+              <div>
+                {title && <h3 className="output-title">{title}</h3>}
+                <pre>{output}</pre>
+              </div>
             ) : (
               <p className="placeholder">
                 Your generated adoption post will appear here.

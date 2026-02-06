@@ -7,3 +7,4 @@ public/config.local.json
 .env.*
 .wrangler
 worker/.wrangler
+.netlify
