@@ -1,6 +1,12 @@
 export type PublicConfig = {
   backendBaseUrl: string;
   appTitle: string;
+  heroEyebrow: string;
+  heroSubtitle: string;
+  accessTitle: string;
+  accessSubtitle: string;
+  accessHint: string;
+  accessExampleUrl: string;
   maxOutputChars: number;
 };
 

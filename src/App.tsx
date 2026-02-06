@@ -93,16 +93,15 @@ export function App() {
     return (
       <div className="page">
         <header className="hero">
-          <p className="eyebrow">접근 권한 필요</p>
+          <p className="eyebrow">{config.accessTitle}</p>
           <h1>{config.appTitle}</h1>
           <p className="subtitle">
-            이 생성기는 초대받은 사람만 사용할 수 있어요. 구조팀에서 전달한
-            전용 링크로 접속해 주세요.
+            {config.accessSubtitle}
           </p>
           <div className="card info">
-            <p>아래처럼 토큰을 주소 끝에 붙여 접속합니다.</p>
+            <p>{config.accessHint}</p>
             <code className="token-link">
-              https://your-site/?token=YOURTOKEN
+              {config.accessExampleUrl}
             </code>
           </div>
         </header>
@@ -113,11 +112,10 @@ export function App() {
   return (
     <div className="page">
       <header className="hero">
-        <p className="eyebrow">입양 홍보문 생성기</p>
+        <p className="eyebrow">{config.heroEyebrow}</p>
         <h1>{config.appTitle}</h1>
         <p className="subtitle">
-          핵심 정보를 정리해 바로 게시 가능한 홍보문을 만들어 드립니다.
-          고양이의 매력을 살리고 사실 기반으로 정리해요.
+          {config.heroSubtitle}
         </p>
       </header>
 
