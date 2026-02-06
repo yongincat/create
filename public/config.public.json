@@ -2,10 +2,10 @@
   "backendBaseUrl": "/.netlify/functions",
   "appTitle": "용인캣 고양이 입양글 내용 생성기",
   "heroEyebrow": "Adopt Yongin Cat",
-  "heroSubtitle": "아래 내용을 편하게 입력해주시고, 없거나 모르는 내용은 비워두셔도 됩니다. 최대한 상세히 작성해주실수록 더 좋은 입양글이 생성됩니다! chatGPT API를 사용하여, 여러분이 내용 생성 버튼을 누를 때 마다 개발자 지갑에서 사용요금이 (아주 조금씩이지만) 빠져나갑니다. 개발자의 기부로 유지되고 있으니 이를 감안하여 신중하게 생성 버튼을 눌러주시기 바랍니다.",
+  "heroSubtitle": "아래 내용을 편하게 대화체로 챗지피티와 이야기하듯 입력해주시고, 없거나 모르는 내용은 비워두셔도 됩니다. 최대한 상세히 작성해주실수록 더 좋은 입양글이 생성됩니다! chatGPT API를 사용하여, 여러분이 내용 생성 버튼을 누를 때 마다 개발자 지갑에서 사용요금이 (아주 조금씩이지만) 빠져나갑니다. 개발자의 기부로 유지되고 있으니 이를 감안하여 신중하게 생성 버튼을 눌러주시기 바랍니다.",
   "accessTitle": "접근 권한 필요",
   "accessSubtitle": "이 생성기는 초대받은 사람만 사용할 수 있어요. 용인캣을 통해 전달된 전용 링크로 접속해 주세요.",
   "accessHint": "아래처럼 토큰을 주소 끝에 붙여 접속합니다.",
-  "accessExampleUrl": "https://yongincatcreate.netlify.app/?token=YOURTOKEN",
-  "maxOutputChars": 2500
+  "accessExampleUrl": "https://yongincatcreate.netlify.app/?token=토큰값",
+  "maxOutputChars": 3000
 }

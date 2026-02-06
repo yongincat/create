@@ -156,6 +156,7 @@ export const handler = async (event: any) => {
     `Only use the contact info provided.`;
 
   const prompt = buildPrompt(payload);
+  const promptId = process.env.PROMPT_ID || "";
 
   const openaiRes = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -168,6 +169,7 @@ export const handler = async (event: any) => {
       temperature,
       top_p: Math.min(1, 0.9 + temperature * 0.1),
       max_output_tokens: 700,
+      ...(promptId ? { metadata: { prompt_id: promptId } } : {}),
       input: [
         { role: "system", content: system },
         { role: "user", content: prompt }

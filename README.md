@@ -30,6 +30,7 @@ Netlify 대시보드에서 `Site settings -> Environment variables`에 아래 �
 - `ALLOWED_TOKENS` (쉼표로 구분된 토큰 목록)
 - `ALLOWED_ORIGIN` (Netlify 사이트 오리진, 예: `https://your-site.netlify.app`)
 - `MAX_OUTPUT_CHARS` (선택, 기본 `2500`)
+- `PROMPT_ID` (선택, 프롬프트 식별자)
 
 ### 3) 공개 설정 파일
 `public/config.public.json`은 **비밀값 없이** 아래처럼 사용합니다.
