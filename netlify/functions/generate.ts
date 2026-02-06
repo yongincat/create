@@ -178,8 +178,20 @@ export const handler = async (event: any) => {
     return jsonResponse({ error: `OpenAI 오류: ${text}` }, 502, origin);
   }
 
-  const data = (await openaiRes.json()) as { output_text?: string };
-  const rawText = data.output_text || "";
+  const data = (await openaiRes.json()) as {
+    output_text?: string;
+    output?: Array<{
+      content?: Array<{ type?: string; text?: string }>;
+    }>;
+  };
+  const rawText =
+    data.output_text ||
+    data.output
+      ?.flatMap((item) => item.content || [])
+      .filter((item) => item.type === "output_text")
+      .map((item) => item.text || "")
+      .join("\n") ||
+    "";
   const trimmed = rawText.slice(0, maxOutputChars);
   const lines = trimmed.split("\n").filter((line) => line.trim() !== "");
   const title = lines.length ? lines[0].trim() : "";
