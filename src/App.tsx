@@ -114,9 +114,11 @@ export function App() {
       <header className="hero">
         <p className="eyebrow">{config.heroEyebrow}</p>
         <h1>{config.appTitle}</h1>
-        <p className="subtitle">
-          {config.heroSubtitle}
-        </p>
+        {config.heroSubtitle.split("\n").map((line, index) => (
+          <p className="subtitle" key={`hero-sub-${index}`}>
+            {line}
+          </p>
+        ))}
       </header>
 
       <main className="grid">
