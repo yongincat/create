@@ -138,8 +138,6 @@ export const handler = async (event: any) => {
   }
 
   const maxOutputChars = Number(process.env.MAX_OUTPUT_CHARS || 2500);
-  const temperature = mapCreativity(payload.creativity || 0);
-
   const prompt = buildPrompt(payload);
   const promptId = process.env.PROMPT_ID || "";
 
@@ -161,8 +159,6 @@ export const handler = async (event: any) => {
       prompt: {
         id: promptId
       },
-      temperature,
-      top_p: Math.min(1, 0.9 + temperature * 0.1),
       max_output_tokens: 700,
       metadata: { prompt_id: promptId },
       text: {
