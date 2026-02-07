@@ -214,8 +214,12 @@ function parseTitleAndBody(text: string) {
   if (titleMatch && bodyMatch) {
     const title = titleMatch[1].trim();
     const body = bodyMatch[1].trim();
-    return { title, text: `${title}\\n${body}`.trim() };
+    return { title, text: body };
   }
 
-  return { title: fallbackTitle, text };
+  const bodyFallback = fallbackLines.length > 1
+    ? fallbackLines.slice(1).join(\"\\n\").trim()
+    : text;
+
+  return { title: fallbackTitle, text: bodyFallback };
 }
