@@ -188,13 +188,23 @@ export const handler = async (event: any) => {
       .map((item) => item.text || "")
       .join("\n") ||
     "";
-  const trimmed = rawText.slice(0, maxOutputChars);
-  const parsed = parseTitleAndBody(trimmed);
+  const parsed = parseTitleAndBody(rawText);
+  const limitedText = parsed.text.slice(0, maxOutputChars);
+  const limitedTitle = parsed.title.slice(0, 120);
 
-  return jsonResponse({ title: parsed.title, text: parsed.text }, 200, origin);
+  return jsonResponse({ title: limitedTitle, text: limitedText }, 200, origin);
 };
 
 function parseTitleAndBody(text: string) {
+  const cleanedInput = stripCodeFence(text).trim();
+  const jsonParsed = tryParseJson(cleanedInput);
+  if (jsonParsed) {
+    return {
+      title: String(jsonParsed.title || ""),
+      text: String(jsonParsed.text || "")
+    };
+  }
+
   const cleaned = text
     .replace(/^\s*Title:\s*/i, "")
     .replace(/\n?\s*Body:\s*/i, "\n");
@@ -215,4 +225,21 @@ function parseTitleAndBody(text: string) {
     : cleaned.trim();
 
   return { title: fallbackTitle, text: bodyFallback };
+}
+
+function stripCodeFence(text: string) {
+  return text.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+}
+
+function tryParseJson(text: string): { title?: string; text?: string } | null {
+  if (!text.startsWith("{")) return null;
+  try {
+    const parsed = JSON.parse(text) as { title?: string; text?: string };
+    if (typeof parsed === "object" && parsed !== null) {
+      return parsed;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }

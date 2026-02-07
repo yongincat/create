@@ -7,5 +7,5 @@
   "accessSubtitle": "이 생성기는 초대받은 사람만 사용할 수 있어요. 용인캣을 통해 전달된 전용 링크로 접속해 주세요.",
   "accessHint": "아래처럼 토큰을 주소 끝에 붙여 접속합니다.",
   "accessExampleUrl": "https://yongincatcreate.netlify.app/?token=토큰값",
-  "maxOutputChars": 4000
+  "maxOutputChars": 30000
 }
