@@ -203,51 +203,23 @@ export const handler = async (event: any) => {
       .map((item) => item.text || "")
       .join("\n") ||
     "";
-  const parsed = parseTitleAndBody(rawText);
-  const limitedText = parsed.text.slice(0, maxOutputChars);
-  const limitedTitle = parsed.title.slice(0, 120);
+  const parsed = parseJsonOnly(rawText);
+  if (!parsed) {
+    return jsonResponse(
+      { error: "모델 출력이 JSON 형식이 아닙니다." },
+      502,
+      origin
+    );
+  }
+  const limitedText = String(parsed.text || "").slice(0, maxOutputChars);
+  const limitedTitle = String(parsed.title || "").slice(0, 120);
 
   return jsonResponse({ title: limitedTitle, text: limitedText }, 200, origin);
 };
 
-function parseTitleAndBody(text: string) {
-  const cleanedInput = stripCodeFence(text).trim();
-  const jsonParsed = tryParseJson(cleanedInput);
-  if (jsonParsed) {
-    return {
-      title: String(jsonParsed.title || ""),
-      text: String(jsonParsed.body || jsonParsed.text || "")
-    };
-  }
-
-  const cleaned = text
-    .replace(/^\s*Title:\s*/i, "")
-    .replace(/\n?\s*Body:\s*/i, "\n");
-  const fallbackLines = cleaned.split("\n").filter((line) => line.trim() !== "");
-  const fallbackTitle = fallbackLines.length ? fallbackLines[0].trim() : "";
-
-  const titleMatch = text.match(/Title:\\s*(.+)/i);
-  const bodyMatch = text.match(/Body:\\s*([\\s\\S]*)/i);
-
-  if (titleMatch && bodyMatch) {
-    const title = titleMatch[1].trim();
-    const body = bodyMatch[1].trim();
-    return { title, text: body };
-  }
-
-  const bodyFallback = fallbackLines.length > 1
-    ? fallbackLines.slice(1).join("\n").trim()
-    : "";
-
-  return { title: fallbackTitle, text: bodyFallback };
-}
-
-function stripCodeFence(text: string) {
-  return text.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
-}
-
-function tryParseJson(text: string): { title?: string; text?: string; body?: string } | null {
-  const jsonText = extractJsonObject(text);
+function parseJsonOnly(text: string): { title?: string; text?: string; body?: string } | null {
+  const cleaned = stripCodeFence(text).trim();
+  const jsonText = extractJsonObject(cleaned);
   if (!jsonText) return null;
   try {
     const parsed = JSON.parse(jsonText) as {
@@ -256,12 +228,19 @@ function tryParseJson(text: string): { title?: string; text?: string; body?: str
       body?: string;
     };
     if (typeof parsed === "object" && parsed !== null) {
-      return parsed;
+      return {
+        title: parsed.title,
+        text: parsed.body || parsed.text
+      };
     }
     return null;
   } catch {
     return null;
   }
+}
+
+function stripCodeFence(text: string) {
+  return text.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
 }
 
 function extractJsonObject(text: string) {
