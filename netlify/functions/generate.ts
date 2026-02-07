@@ -218,7 +218,7 @@ function parseTitleAndBody(text: string) {
   }
 
   const bodyFallback = fallbackLines.length > 1
-    ? fallbackLines.slice(1).join(\"\\n\").trim()
+    ? fallbackLines.slice(1).join("\n").trim()
     : text;
 
   return { title: fallbackTitle, text: bodyFallback };
