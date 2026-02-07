@@ -235,6 +235,7 @@ export function App() {
 
       <main className="grid">
         {activeTab === "generate" ? (
+          <>
           <section className="card form-card">
           <h2>고양이 정보</h2>
           <div className="field-grid">
@@ -410,6 +411,7 @@ export function App() {
             </button>
           </div>
         </section>
+        </>
         ) : (
           <section className="card history-card">
             <div className="history-header">
