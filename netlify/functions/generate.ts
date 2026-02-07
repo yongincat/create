@@ -159,7 +159,7 @@ export const handler = async (event: any) => {
       prompt: {
         id: promptId
       },
-      max_output_tokens: 700,
+      max_output_tokens: Number(process.env.MAX_OUTPUT_TOKENS || 700),
       metadata: { prompt_id: promptId },
       text: {
         format: { type: "text" }
@@ -201,7 +201,7 @@ function parseTitleAndBody(text: string) {
   if (jsonParsed) {
     return {
       title: String(jsonParsed.title || ""),
-      text: String(jsonParsed.text || "")
+      text: String(jsonParsed.body || jsonParsed.text || "")
     };
   }
 
@@ -222,7 +222,7 @@ function parseTitleAndBody(text: string) {
 
   const bodyFallback = fallbackLines.length > 1
     ? fallbackLines.slice(1).join("\n").trim()
-    : cleaned.trim();
+    : "";
 
   return { title: fallbackTitle, text: bodyFallback };
 }
@@ -231,10 +231,15 @@ function stripCodeFence(text: string) {
   return text.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
 }
 
-function tryParseJson(text: string): { title?: string; text?: string } | null {
-  if (!text.startsWith("{")) return null;
+function tryParseJson(text: string): { title?: string; text?: string; body?: string } | null {
+  const jsonText = extractJsonObject(text);
+  if (!jsonText) return null;
   try {
-    const parsed = JSON.parse(text) as { title?: string; text?: string };
+    const parsed = JSON.parse(jsonText) as {
+      title?: string;
+      text?: string;
+      body?: string;
+    };
     if (typeof parsed === "object" && parsed !== null) {
       return parsed;
     }
@@ -242,4 +247,11 @@ function tryParseJson(text: string): { title?: string; text?: string } | null {
   } catch {
     return null;
   }
+}
+
+function extractJsonObject(text: string) {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) return "";
+  return text.slice(start, end + 1);
 }

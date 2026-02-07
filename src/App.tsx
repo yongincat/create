@@ -381,9 +381,7 @@ export function App() {
         <section className="card output-card">
           <div className="output-header">
             <h2>생성 결과</h2>
-            <span className="char-count">
-              {output.length}/{config.maxOutputChars}
-            </span>
+            <span className="char-count">{output.length}자</span>
           </div>
 
           <div className="output-body">

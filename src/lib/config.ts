@@ -7,7 +7,6 @@ export type PublicConfig = {
   accessSubtitle: string;
   accessHint: string;
   accessExampleUrl: string;
-  maxOutputChars: number;
 };
 
 type ConfigState = {
