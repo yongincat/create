@@ -149,7 +149,13 @@ export const handler = async (event: any) => {
     `4) Clear call-to-action ending.\n` +
     `Keep tone consistent with the style preset.\n` +
     `Avoid medical guarantees and do not invent personal data.\n` +
-    `Only use the contact info provided.`;
+    `Only use the contact info provided.\n` +
+    `Output format must be:\n` +
+    `Title: <single line title>\n` +
+    `Body:\n` +
+    `<3-6 short paragraphs>\n` +
+    `- Facts bullet list (age/sex/neutered/health)\n` +
+    `Call-to-action ending line.`;
 
   const prompt = buildPrompt(payload);
   const promptId = process.env.PROMPT_ID || "";
@@ -193,8 +199,23 @@ export const handler = async (event: any) => {
       .join("\n") ||
     "";
   const trimmed = rawText.slice(0, maxOutputChars);
-  const lines = trimmed.split("\n").filter((line) => line.trim() !== "");
-  const title = lines.length ? lines[0].trim() : "";
+  const parsed = parseTitleAndBody(trimmed);
 
-  return jsonResponse({ title, text: trimmed }, 200, origin);
+  return jsonResponse({ title: parsed.title, text: parsed.text }, 200, origin);
 };
+
+function parseTitleAndBody(text: string) {
+  const fallbackLines = text.split("\n").filter((line) => line.trim() !== "");
+  const fallbackTitle = fallbackLines.length ? fallbackLines[0].trim() : "";
+
+  const titleMatch = text.match(/Title:\\s*(.+)/i);
+  const bodyMatch = text.match(/Body:\\s*([\\s\\S]*)/i);
+
+  if (titleMatch && bodyMatch) {
+    const title = titleMatch[1].trim();
+    const body = bodyMatch[1].trim();
+    return { title, text: `${title}\\n${body}`.trim() };
+  }
+
+  return { title: fallbackTitle, text };
+}

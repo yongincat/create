@@ -25,6 +25,10 @@ export type GenerateResponse = {
   text: string;
 };
 
+export type AdminVerifyResponse = {
+  ok: boolean;
+};
+
 export async function generatePost(
   payload: GenerateRequest
 ): Promise<GenerateResponse> {
@@ -49,4 +53,28 @@ export async function generatePost(
   }
 
   return (await res.json()) as GenerateResponse;
+}
+
+export async function verifyAdmin(password: string): Promise<AdminVerifyResponse> {
+  const config = getConfig();
+  const res = await fetch(`${config.backendBaseUrl}/admin`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ password })
+  });
+
+  if (!res.ok) {
+    let message = "관리자 인증 실패";
+    try {
+      const data = (await res.json()) as { error?: string };
+      if (data?.error) message = data.error;
+    } catch {
+      // ignore json parse errors
+    }
+    throw new Error(`${message} (상태 ${res.status})`);
+  }
+
+  return (await res.json()) as AdminVerifyResponse;
 }
