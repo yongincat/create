@@ -140,25 +140,16 @@ export const handler = async (event: any) => {
   const maxOutputChars = Number(process.env.MAX_OUTPUT_CHARS || 2500);
   const temperature = mapCreativity(payload.creativity || 0);
 
-  const system =
-    `You create cat adoption promotion posts.\n` +
-    `Follow this exact structure:\n` +
-    `1) Title line.\n` +
-    `2) 3-6 short paragraphs.\n` +
-    `3) Facts bullet list with age, sex, neutered/spayed, and health.\n` +
-    `4) Clear call-to-action ending.\n` +
-    `Keep tone consistent with the style preset.\n` +
-    `Avoid medical guarantees and do not invent personal data.\n` +
-    `Only use the contact info provided.\n` +
-    `Output format must be:\n` +
-    `Title: <single line title>\n` +
-    `Body:\n` +
-    `<3-6 short paragraphs>\n` +
-    `- Facts bullet list (age/sex/neutered/health)\n` +
-    `Call-to-action ending line.`;
-
   const prompt = buildPrompt(payload);
   const promptId = process.env.PROMPT_ID || "";
+
+  if (!promptId) {
+    return jsonResponse(
+      { error: "PROMPT_ID 환경변수가 설정되어 있지 않습니다." },
+      500,
+      origin
+    );
+  }
 
   const openaiRes = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -167,15 +158,18 @@ export const handler = async (event: any) => {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "gpt-4.1-mini",
+      prompt: {
+        id: promptId
+      },
       temperature,
       top_p: Math.min(1, 0.9 + temperature * 0.1),
       max_output_tokens: 700,
-      ...(promptId ? { metadata: { prompt_id: promptId } } : {}),
-      input: [
-        { role: "system", content: system },
-        { role: "user", content: prompt }
-      ]
+      metadata: { prompt_id: promptId },
+      text: {
+        format: { type: "text" }
+      },
+      input: prompt,
+      store: true
     })
   });
 
@@ -205,7 +199,10 @@ export const handler = async (event: any) => {
 };
 
 function parseTitleAndBody(text: string) {
-  const fallbackLines = text.split("\n").filter((line) => line.trim() !== "");
+  const cleaned = text
+    .replace(/^\s*Title:\s*/i, "")
+    .replace(/\n?\s*Body:\s*/i, "\n");
+  const fallbackLines = cleaned.split("\n").filter((line) => line.trim() !== "");
   const fallbackTitle = fallbackLines.length ? fallbackLines[0].trim() : "";
 
   const titleMatch = text.match(/Title:\\s*(.+)/i);
@@ -219,7 +216,7 @@ function parseTitleAndBody(text: string) {
 
   const bodyFallback = fallbackLines.length > 1
     ? fallbackLines.slice(1).join("\n").trim()
-    : text;
+    : cleaned.trim();
 
   return { title: fallbackTitle, text: bodyFallback };
 }
