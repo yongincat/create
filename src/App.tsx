@@ -9,6 +9,12 @@ const STYLE_PRESETS = [
   "짧고 강렬하게"
 ];
 
+const OUTPUT_LENGTHS = [
+  { value: "short", label: "짧게 (약 500자)" },
+  { value: "medium", label: "중간 (약 1200자)" },
+  { value: "long", label: "길게 (약 2000자)" }
+];
+
 function getTokenFromUrl(): string | null {
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token");
@@ -26,6 +32,7 @@ type HistoryItem = {
   inputs: GenerateInputs;
   stylePreset: string;
   creativity: number;
+  outputLength: "short" | "medium" | "long";
   title?: string;
   text?: string;
 };
@@ -94,6 +101,9 @@ export function App() {
 
   const [stylePreset, setStylePreset] = useState(STYLE_PRESETS[0]);
   const [creativity, setCreativity] = useState(50);
+  const [outputLength, setOutputLength] = useState<"short" | "medium" | "long">(
+    "medium"
+  );
   const [output, setOutput] = useState("");
   const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +121,8 @@ export function App() {
         token,
         inputs,
         stylePreset,
-        creativity: clampCreativity(creativity)
+        creativity: clampCreativity(creativity),
+        outputLength
       });
       setOutput(response.text);
       setTitle(response.title || "");
@@ -121,6 +132,7 @@ export function App() {
         inputs,
         stylePreset,
         creativity: clampCreativity(creativity),
+        outputLength,
         title: response.title,
         text: response.text
       };
@@ -357,6 +369,22 @@ export function App() {
           </div>
 
           <div className="field">
+            <label className="label">글 길이</label>
+            <select
+              value={outputLength}
+              onChange={(e) =>
+                setOutputLength(e.target.value as "short" | "medium" | "long")
+              }
+            >
+              {OUTPUT_LENGTHS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
             <label className="label">창의성: {creativity}</label>
             <input
               type="range"
@@ -486,6 +514,16 @@ export function App() {
                       <div className="history-field">
                         <span className="history-label">문체</span>
                         <span className="history-value">{item.stylePreset}</span>
+                      </div>
+                      <div className="history-field">
+                        <span className="history-label">글 길이</span>
+                        <span className="history-value">
+                          {item.outputLength === "short"
+                            ? "짧게"
+                            : item.outputLength === "long"
+                              ? "길게"
+                              : "중간"}
+                        </span>
                       </div>
                       <div className="history-field">
                         <span className="history-label">창의성</span>

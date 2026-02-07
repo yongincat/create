@@ -14,6 +14,7 @@ type GenerateRequest = {
   };
   stylePreset: string;
   creativity: number;
+  outputLength: "short" | "medium" | "long";
 };
 
 type RateKey = {
@@ -68,9 +69,16 @@ function mapCreativity(value: number) {
 function buildPrompt(payload: GenerateRequest) {
   const { inputs, stylePreset } = payload;
   const temperament = inputs.temperament?.trim() || "Not specified";
+  const lengthHint =
+    payload.outputLength === "short"
+      ? "about 500 characters"
+      : payload.outputLength === "long"
+        ? "about 2000 characters"
+        : "about 1200 characters";
 
   return (
     `Style preset: ${stylePreset}\n\n` +
+    `Target length: ${lengthHint}\n` +
     `Cat name: ${inputs.catName || "Not specified"}\n` +
     `Age: ${inputs.ageValue || "Not specified"} ${inputs.ageUnit}\n` +
     `Sex: ${inputs.sex}\n` +
@@ -137,7 +145,14 @@ export const handler = async (event: any) => {
     return jsonResponse({ error: "요청이 너무 많습니다. 잠시 후 다시 시도하세요." }, 429, origin);
   }
 
-  const maxOutputChars = Number(process.env.MAX_OUTPUT_CHARS || 2500);
+  const maxOutputCharsBase = Number(process.env.MAX_OUTPUT_CHARS || 2500);
+  const lengthCap =
+    payload.outputLength === "short"
+      ? 500
+      : payload.outputLength === "long"
+        ? 2000
+        : 1200;
+  const maxOutputChars = Math.min(maxOutputCharsBase, lengthCap);
   const prompt = buildPrompt(payload);
   const promptId = process.env.PROMPT_ID || "";
 
@@ -251,7 +266,32 @@ function tryParseJson(text: string): { title?: string; text?: string; body?: str
 
 function extractJsonObject(text: string) {
   const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1 || end <= start) return "";
-  return text.slice(start, end + 1);
+  if (start === -1) return "";
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = start; i < text.length; i += 1) {
+    const ch = text[i];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (ch === "\\\\") {
+      escaped = true;
+      continue;
+    }
+    if (ch === "\"") {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (ch === "{") depth += 1;
+    if (ch === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        return text.slice(start, i + 1);
+      }
+    }
+  }
+  return "";
 }

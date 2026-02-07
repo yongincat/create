@@ -18,6 +18,7 @@ export type GenerateRequest = {
   inputs: GenerateInputs;
   stylePreset: string;
   creativity: number;
+  outputLength: "short" | "medium" | "long";
 };
 
 export type GenerateResponse = {
